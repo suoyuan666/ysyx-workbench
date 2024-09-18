@@ -4,10 +4,11 @@ OUT_DIR=./build
 OUT=$(OUT_DIR)/out
 INC_PATH=$(NVBOARD_HOME)/usr/include
 
-VSF=$(VS)/select.v
+VSF=$(VS)/code.v $(VS)/bcd2ssg.v
 CSF=$(CS)/main.cpp
+TOPNAME=code
 
-VERILATOR_FLAGS = --cc --exe -j 6 --build --trace -Wall
+VERILATOR_FLAGS = --cc --exe -j 6 --build --trace
 
 include $(NVBOARD_HOME)/scripts/nvboard.mk
 INCLUDE = $(addprefix -I, $(INC_PATH))
@@ -17,6 +18,7 @@ LDFLAGS += -lc++
 all: $(CSF) $(VSF) $(NVBOARD_ARCHIVE)
 	verilator $^ --Mdir $(OUT_DIR)  \
 		-o $(abspath $(OUT))		\
+		--top-module $(TOPNAME)		\
 		$(VERILATOR_FLAGS)			\
 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS))
 
