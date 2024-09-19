@@ -4,11 +4,11 @@ OUT_DIR=./build
 OUT=$(OUT_DIR)/out
 INC_PATH=$(NVBOARD_HOME)/usr/include
 
-VSF=$(VS)/code.v $(VS)/bcd2ssg.v $(VS)/code_top.v
-CSF=$(CS)/code.cpp
-TOPNAME=code_top
+VSF=$(VS)/alu.v
+CSF=$(CS)/alu.cpp
+TOPNAME=alu
 
-VERILATOR_FLAGS = --cc --exe -j 6 --build --trace
+VERILATOR_FLAGS = --cc --exe -j 6 --build --trace --Wall
 
 include $(NVBOARD_HOME)/scripts/nvboard.mk
 INCLUDE = $(addprefix -I, $(INC_PATH))
