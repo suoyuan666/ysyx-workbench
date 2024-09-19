@@ -1,8 +1,7 @@
 module code (
     input [7:0] cod,
     input en,
-    output reg [3:0] out,
-    output reg [6:0] sout
+    output reg [3:0] out
 );
     always @(cod, en) begin
        if (en) begin
@@ -13,8 +12,4 @@ module code (
        else
         out = 0;
     end
-    bcd2ssg sg(
-        .in(out),
-        .out(sout)
-    );
 endmodule

@@ -4,9 +4,9 @@ OUT_DIR=./build
 OUT=$(OUT_DIR)/out
 INC_PATH=$(NVBOARD_HOME)/usr/include
 
-VSF=$(VS)/code.v $(VS)/bcd2ssg.v
-CSF=$(CS)/main.cpp
-TOPNAME=code
+VSF=$(VS)/code.v $(VS)/bcd2ssg.v $(VS)/code_top.v
+CSF=$(CS)/code.cpp
+TOPNAME=code_top
 
 VERILATOR_FLAGS = --cc --exe -j 6 --build --trace
 

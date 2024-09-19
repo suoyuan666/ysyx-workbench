@@ -5,8 +5,8 @@ module bcd2ssg (
     always @(in) begin
         case (in)
             0: out =  7'b1000000;
-            1: out =  7'b1111100;
-            2: out =  7'b1100110;
+            1: out =  7'b1111001;
+            2: out =  7'b0100100;
             3: out =  7'b0110000;
             4: out =  7'b0011001;
             5: out =  7'b0010010;
