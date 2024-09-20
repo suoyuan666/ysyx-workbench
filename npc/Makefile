@@ -4,9 +4,9 @@ OUT_DIR=./build
 OUT=$(OUT_DIR)/out
 INC_PATH=$(NVBOARD_HOME)/usr/include
 
-VSF=$(VS)/alu.v
-CSF=$(CS)/alu.cpp
-TOPNAME=alu
+VSF=$(VS)/shift.v
+CSF=$(CS)/shift.cpp
+TOPNAME=shift
 
 VERILATOR_FLAGS = --cc --exe -j 6 --build --trace --Wall
 
