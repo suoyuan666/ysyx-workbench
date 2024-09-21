@@ -4,15 +4,19 @@ OUT_DIR=./build
 OUT=$(OUT_DIR)/out
 INC_PATH=$(NVBOARD_HOME)/usr/include
 
-VSF=$(VS)/shift.v
-CSF=$(CS)/shift.cpp
-TOPNAME=shift
+VSF=$(VS)/ps2_keyboard.v	\
+	$(VS)/keyboard.v		\
+	$(VS)/bcd2ssg.v 		\
+	$(VS)/hex2ssg.v			\
+	$(VS)/bcd2ascii.v
+CSF=$(CS)/keyboard.cpp
+TOPNAME=keyboard
 
-VERILATOR_FLAGS = --cc --exe -j 6 --build --trace --Wall
+VERILATOR_FLAGS = --cc --exe -j 6 --build --trace -Wall
 
 include $(NVBOARD_HOME)/scripts/nvboard.mk
 INCLUDE = $(addprefix -I, $(INC_PATH))
-CXXFLAGS += $(INCLUDE)
+CXXFLAGS += $(INCLUDE) -ggdb
 LDFLAGS += -lc++
 
 all: $(CSF) $(VSF) $(NVBOARD_ARCHIVE)
