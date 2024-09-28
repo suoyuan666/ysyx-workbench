@@ -97,6 +97,10 @@ static int cmd_x(char *args) {
 }
 
 static int cmd_p(char *args) {
+  bool expr_success = true;
+  word_t addr = expr(args, &expr_success);
+  Assert(expr_success, "cmd_p: get false from expr\n");
+  printf("rs: %u\n", addr);
   return 0;
 }
 

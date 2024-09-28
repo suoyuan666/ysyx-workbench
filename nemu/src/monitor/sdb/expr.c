@@ -271,24 +271,24 @@ int expr_core(const int prev,const int next) {
         op.index = i;
         fetch_compre_eq = true;
       } else if (!fetch_blcok && !fetch_logic_or && !fetch_logic_and &&
-                 !fetch_compare && fetch_compre_eq &&
+                 !fetch_compare && !fetch_compre_eq &&
                  (tokens[i].type == TK_SHIFT_LEFT ||
                   tokens[i].type == TK_SHIFT_RIGHT)) {
         op.index = i;
         fetch_shift = true;
       } else if (!fetch_blcok && !fetch_logic_or && !fetch_logic_and &&
-                 !fetch_compare && fetch_compre_eq && !fetch_shift &&
+                 !fetch_compare && !fetch_compre_eq && !fetch_shift &&
                  (tokens[i].type == '+' || tokens[i].type == '-')) {
         op.index = i;
         fetch_add_sub = true;
       } else if (!fetch_blcok && !fetch_logic_or && !fetch_logic_and &&
-                 !fetch_compare && fetch_compre_eq && !fetch_shift &&
+                 !fetch_compare && !fetch_compre_eq && !fetch_shift &&
                  !fetch_add_sub &&
                  (tokens[i].type == '*' || tokens[i].type == '/')) {
         op.index = i;
         fetch_imul = true;
       } else if (!fetch_blcok && !fetch_logic_or && !fetch_logic_and &&
-                 !fetch_compare && fetch_compre_eq && !fetch_shift &&
+                 !fetch_compare && !fetch_compre_eq && !fetch_shift &&
                  !fetch_add_sub && !fetch_imul &&
                  (tokens[i].type == TK_LOGIC_NOT || tokens[i].type == TK_PTR)) {
         op.index = i;
