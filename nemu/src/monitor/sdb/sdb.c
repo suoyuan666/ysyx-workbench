@@ -13,11 +13,20 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 #include <isa.h>
 #include <cpu/cpu.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
+#include "common.h"
+#include "debug.h"
+#include "memory/paddr.h"
+#include "watchpoint.h"
 
 static int is_batch_mode = false;
 
@@ -54,6 +63,61 @@ static int cmd_q(char *args) {
 
 static int cmd_help(char *args);
 
+static int cmd_si(char *args) {
+  return 0;
+}
+
+static int cmd_info(char *args) {
+  if (strcmp(args, "r") == 0) {
+    isa_reg_display();
+  } else if (strcmp(args, "w") == 0) {
+    print_wp();
+  }
+  return 0;
+}
+
+static int cmd_x(char *args) {
+  bool expr_success = true;
+  char *expression;
+  int len = atoi(strtok_r(args, " ", &expression));
+  word_t addr = expr(expression, &expr_success);
+  Assert(expr_success, "cmd_x: get false from expr\n");
+  printf("addr: 0x%x\n", addr);
+
+  Assert(addr != 0, "cmd_x: addr == 0");
+  
+  printf("result:\n");
+  for (int i = 0; i < len; ++i) {
+    word_t a = paddr_read(addr+i, 1);
+    printf("%x ", a);
+  }
+  printf("\n");
+  
+  return 0;
+}
+
+static int cmd_p(char *args) {
+  return 0;
+}
+
+int wp_index = 0;
+
+static int cmd_w(char *args) {
+  WP *wp = new_wp();
+  Assert(wp != NULL, "cmd_w: wp is NULL");
+  wp->NO = wp_index;
+  strncpy(wp->exp, args, sizeof(wp->exp));
+  bool suceess = true;
+  wp->old_rs = expr(args, &suceess);
+  Assert(suceess, "cmd_w: success is false!, expr error");
+  wp_index++;
+  return 0;
+}
+
+static int cmd_d(char *args) {
+  return 0;
+}
+
 static struct {
   const char *name;
   const char *description;
@@ -62,9 +126,12 @@ static struct {
   { "help", "Display information about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
-
-  /* TODO: Add more commands */
-
+  {"si", "Step program by number", cmd_si},
+  {"info", "Check the register or watchpoint info", cmd_info},
+  {"x", "Examine memory", cmd_x},
+  {"p", "print expression", cmd_p},
+  {"w", "set watchpoint", cmd_w},
+  {"d", "delete watchpoint", cmd_d},
 };
 
 #define NR_CMD ARRLEN(cmd_table)

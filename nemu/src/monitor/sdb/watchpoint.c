@@ -14,13 +14,17 @@
 ***************************************************************************************/
 
 #include "sdb.h"
+#include <stdint.h>
+#include <stdbool.h>
+#include <string.h>
 
 #define NR_WP 32
 
 typedef struct watchpoint {
   int NO;
   struct watchpoint *next;
-
+  uint32_t old_rs;
+  char exp[128];
   /* TODO: Add more members if necessary */
 
 } WP;
@@ -39,5 +43,50 @@ void init_wp_pool() {
   free_ = wp_pool;
 }
 
+WP* new_wp() {
+  WP* tmp = NULL;
+  if (free_ != NULL) {
+    tmp = head;
+    if (tmp == NULL) {
+      tmp = (WP*)wp_pool;
+      head = tmp;
+    } else {
+      while (tmp->next != NULL);
+      tmp->next = (WP*)wp_pool;
+    }
+    *wp_pool = *(((WP*)wp_pool)->next);
+  }
+  return tmp;
+}
+
+void free_wp(WP *wp) {
+  if (wp != NULL) {
+    WP *tmp = wp_pool;
+    for (WP *hd = head; hd != NULL; hd = hd->next) {
+      if (hd->next == wp) {
+        hd->next = wp->next;
+      }
+    }
+    while(tmp->next != NULL);
+    tmp->next = wp;
+  }
+}
+
+void print_wp() {
+  for (WP *p = head; p != NULL && p->exp[0] != '\0'; p = p->next) {
+    printf("num: %d, exp: %s, old_rs: %d\n", p->NO, p->exp, p->old_rs);
+  }
+}
+
+ WP* check_diff(int *new_rs) {
+  for (WP* p = head; p != NULL; p = p->next) {
+    bool rs = true;
+    *new_rs = expr(p->exp, &rs);
+    if (p->old_rs != *new_rs) {
+      return p;
+    }
+  }
+  return NULL;
+}
 /* TODO: Implement the functionality of watchpoint */
 

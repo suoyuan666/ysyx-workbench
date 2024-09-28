@@ -13,10 +13,27 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#include "debug.h"
+#include "utils.h"
 #include <cpu/cpu.h>
 #include <cpu/decode.h>
 #include <cpu/difftest.h>
 #include <locale.h>
+#include <stdio.h>
+#include <string.h>
+
+#ifdef CONFIG_WATCHPOINT
+typedef struct watchpoint {
+  int NO;
+  struct watchpoint *next;
+  uint32_t old_rs;
+  char exp[128];
+  /* TODO: Add more members if necessary */
+
+} WP;
+
+WP* check_diff(int *new_rs);
+#endif
 
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
@@ -38,6 +55,14 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
+#ifdef CONFIG_WATCHPOINT
+  int new_rs;
+  WP *wp = check_diff(&new_rs);
+  if (wp != NULL) {
+    printf("exp: %s, old_rs: %d, new_rs: %d\n", wp->exp, wp->old_rs, new_rs);
+    nemu_state.state = NEMU_STOP;
+  }
+#endif
 }
 
 static void exec_once(Decode *s, vaddr_t pc) {

@@ -13,8 +13,11 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#include <string.h>
+#include <stdio.h>
 #include <isa.h>
 #include "local-include/reg.h"
+#include "common.h"
 
 const char *regs[] = {
   "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
@@ -24,8 +27,30 @@ const char *regs[] = {
 };
 
 void isa_reg_display() {
+  printf("$pc: %x\n", cpu.pc);
+  for (int i = 0; i < 32; i+=4) {
+    printf("%s: %x, %s: %x, %s: %x, %s: %x\n", 
+          regs[i], cpu.gpr[i], 
+          regs[i + 1], cpu.gpr[i + 1],
+          regs[i + 2], cpu.gpr[i + 2], 
+          regs[i + 3], cpu.gpr[i + 3]);
+  }
 }
 
 word_t isa_reg_str2val(const char *s, bool *success) {
-  return 0;
+  int index = 0;
+  int rs = 0;
+  for (index = 0; index < 32; ++index) {
+    if (strcmp(regs[index], s) == 0) {
+      *success = true;
+      break;
+    }
+  }
+  rs = cpu.gpr[index];
+  if (strcmp(s, "pc") == 0){
+    rs = cpu.pc;
+    *success = true;
+  }
+  
+  return rs;
 }
